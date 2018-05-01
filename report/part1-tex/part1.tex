@@ -1,4 +1,5 @@
-\documentclass[12pt,aps,pre,reprint]{revtex4-1}
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{hyperref}
@@ -22,7 +23,7 @@
 
 \section{Problem 1}
 \subsection{(a)}
-Since we assume English text can be modeled as a Markov chain, the probability of a string of plaintext $\mathbf{x}$ is:
+Since we assume English text can be modeled as a Markov chain, the probability of a plaintext $\mathbf{x}$ is:
 \begin{equation}
 \begin{split}
 	p_{\mathbf{x}}(\mathbf{x}) & = \mathbb{P}(x_1)\mathbb{P}(x_2|x_1)\cdots\mathbb{P}(x_n|x_{n-1})\\ 
@@ -45,7 +46,7 @@ Since we adopt a uniform prior:
 \begin{equation}
 	p_{f}(f) = \frac{1}{|\mathcal{F}|}
 \end{equation}
-where $\mathcal{F}$ is the set of all possible cyphering functions (permutations on $\mathcal{A}$). We can simplify the formula of $p_{f|\mathbf{y}}(f|\mathbf{y})$ to:
+where $\mathcal{F}$ is the set of all possible cyphering functions (permutations on $\mathcal{A}$, $\mathcal{F}=\text{Perm}(\mathcal{A})$). We can simplify the formula of $p_{f|\mathbf{y}}(f|\mathbf{y})$ to:
 \begin{equation}
 p_{f|\mathbf{y}}(f|\mathbf{y}) = \frac{p_{\mathbf{y}|f}(\mathbf{y}|f)}{\Sigma_{f}p_{\mathbf{y}|f}(\mathbf{y}|f)}
 \end{equation}
@@ -62,7 +63,7 @@ Again because we assume uniform prior, it could be simplify to:
 It's the same as the ML estimator.
 
 \subsection{(c)}
-Direct evaluation of the MAP estimate $\hat{f}_{\text{MAP}}$ is computationally infeasible since the alphabet of ciphering functions $\mathcal{F}$ is too large:
+Direct evaluation of the MAP estimate $\hat{f}_{\text{MAP}}$ is computationally infeasible since the alphabet of ciphering functions, $\mathcal{F}$, is too large:
 \begin{equation}
 	|\mathcal{F}| = |\mathcal{A}|! = 28! = 304888344611713860501504000000
 \end{equation}
@@ -83,7 +84,7 @@ such "neighboring" pairs. And since there are ${|\mathcal{A}|!\choose2}$ cipher 
 \end{equation}
 
 \subsection{(b)}
-Inspired by problem 2(a), we construct the proposal transition matrix is:
+Inspired by problem 2(a), we construct the proposal transition matrix as:
 \begin{equation}
 V(f'|f) =
 \begin{cases}
@@ -97,7 +98,7 @@ Following the Metropolis-Hastings algorithm, the effective transition matrix is:
 \begin{equation}
 	W(f'|f) = V(f'|f)a(f\to f')\quad\text{if }f'\in \text{Nei}(f)
 \end{equation}
-where $a(f\to f') = \min\big\{1, \frac{p_{\mathbf{y}|f}(\mathbf{y}|f')}{p_{\mathbf{y}|f}(\mathbf{y}|f)}\big\}$ and the likelihood function $p_{\mathbf{y}|f}(\mathbf{y}|f)$ is understand as the not-normalized posterior.
+where $a(f\to f') = \min\big\{1, \frac{p_{\mathbf{y}|f}(\mathbf{y}|f')}{p_{\mathbf{y}|f}(\mathbf{y}|f)}\big\}$ and the likelihood function $p_{\mathbf{y}|f}(\mathbf{y}|f)$ is understand as the "un-normalized" posterior.
 
 By the normalization constraints, the full formula of the effective transition matrix $W$ is:
 \begin{equation}
@@ -111,9 +112,7 @@ This defines a Markov chain whose stationary distribution is the posterior $p_{f
 \subsection{(c)}
 Pseudo-code of Metropolis-Hastings algorithm for decoding the ciphertext:
 
-\begin{widetext}
-\begin{algorithm*}[H]
-	\SetAlgoLined
+\begin{algorithm}[H]
 	\KwIn{alphabet $\mathcal{A}$, ciphertext $\mathbf{y}$, maximum number of iterations $T_\text{max}$, termination threshold $T_\text{term}$}
 	\KwResult{predicted cipher function $f_\text{pred}$}
 	Initialization: randomly pick $f\in \text{Perm}(\mathcal{A})$\;
@@ -134,9 +133,8 @@ Pseudo-code of Metropolis-Hastings algorithm for decoding the ciphertext:
 		$t+=1$\;
 	}
 	$f_{\text{pred}} = f$\;
-	\caption{MH decoding algorithm}
-\end{algorithm*}
-\end{widetext}
+\caption{MH decoding algorithm}
+\end{algorithm}
 
 The algorithm terminates when either the number of iterations exceed $T_\text{max}$ or the current cipher function $f$ is not updated for $T_\text{term}$ iterations.
 
@@ -157,17 +155,17 @@ We can see the log-likelihood of accepted state is monotonically increasing alon
 The acceptance rate of state transitions versus iteration count is plotted as Fig. \ref{fig:acceptance-rate}. Note that the acceptance rate is a sliding window average with window length $T=100$. This is the result of one single experiment on the full ciphertext. The range of x-axis in Fig. \ref{fig:acceptance-rate} is $100\leq\text{iter}\leq3000$.  
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{pics/acceptance-rate.png}
+	\includegraphics[width=0.9\linewidth]{pics/acceptance-rate.png}
 	\caption{Acceptance rate of state transitions versus iteration count.}
 	\label{fig:acceptance-rate}
 \end{figure}
 We can see the acceptance rate first increase rapidly and the drop rapidly. The curve of acceptance rate has a sharp peak at around $\text{iter}\approx400$.
 
 \subsection{(c)}
-The accuracy rate versus iteration count is plotted as Fig. \ref{fig:accuracy}. 
+The accuracy rate versus iteration count is plotted as Fig. \ref{fig:accuracy}. This is the result of one single experiment on the full ciphertext. 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{pics/accuracy.png}
+	\includegraphics[width=0.9\linewidth]{pics/accuracy.png}
 	\caption{Accuracy rate versus iteration count.}
 	\label{fig:accuracy}
 \end{figure}
@@ -177,7 +175,7 @@ We can see the accuracy increase monotonically along with the iteration count. A
 I run the MCMC-based decoding algorithm on ciphertext with different lengths, ($\text{length}=50, 100, 200, 400, 800, 1600, 3200$) independently. For each ciphertext, I run 20 independent trials and record the average accuracy of the 20 predictions. The average accuracies versus iteration count is plotted as Fig. \ref{fig:text-length}.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{pics/text-length.png}
+	\includegraphics[width=0.9\linewidth]{pics/text-length.png}
 	\caption{Average accuracies for ciphertexts of different lengths versus iteration count.}
 	\label{fig:text-length}
 \end{figure}
@@ -187,10 +185,10 @@ We can see that the average accuracies of longer ciphertext strictly bound the a
 I run the MCMC-based decoding algorithm on ciphertext with different lengths, ($\text{length}= 100, 200, 400, 800, 1600$) independently. For each ciphertext, I run 20 independent trials and record the average log-likelihood per symbol (in bits) of the 20 predictions. The average log-likelihood per symbol (in bits) versus iteration count is plotted as Fig. \ref{fig:text-length}. The two plots are the same set of curves with different x-axis range. The x-axis range of the upper plot is $1\leq\text{iter}\leq5000$, and is $1000\leq\text{iter}\leq5000$ for the lower one. 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{pics/entropy-1.png}
-	\includegraphics[width=\linewidth]{pics/entropy-2.png}
+	\includegraphics[width=0.9\linewidth]{pics/entropy-1.png}
+	\includegraphics[width=0.9\linewidth]{pics/entropy-2.png}
 	\caption{Average log-likelihood per symbol (in bits) versus iteration count.}
 	\label{fig:entropy}
 \end{figure}
-We can see that the steady state values of these curves are generally independent of the length of ciphertext used. And this average is around $-3.50$. Since the steady state distribution of our MCMC-based algorithm is just the distribution of English texts (modeled as Markov chains), we can say that the steady value of these curves, $-3.50$, is the expectation value of the log-likelihood per symbol for English text. And clearly it is just the negative average Entropy per English symbol. From this, we can say the average entropy of English text is roughly $3.50$ bits per symbol (letter). This empirical estimation is slightly larger than Shannon's estimation in “Prediction and Entropy of Printed English”, which is $2.3$ bits instead. But at least their magnitudes are similar, and this small difference is reasonable since the empirical entropy of English text depends on how the alphabet is modeled.
+We can see that the steady state values of these curves are generally independent of the length of ciphertext used. And this average is around $-3.50$. Since the steady state distribution of our MCMC-based algorithm is just the distribution of English texts (modeled as Markov chains), we can say that the steady value of these curves, $-3.50$, is the expectation value of the log-likelihood per symbol for English text. And clearly it is just the negative average Entropy per English symbol. From this, we can say the average entropy of English text is roughly $3.50$ bits per symbol (letter). This empirical estimation is slightly larger than Shannon's estimation in "Prediction and Entropy of Printed English", which is $2.3$ bits instead. But at least their magnitudes are similar, and this small difference is reasonable since the empirical entropy of English text depends on how the alphabet is modeled.
 \end{document}
