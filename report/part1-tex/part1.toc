@@ -1,0 +1,7 @@
+\contentsline {title}{Answer to 6.437 Project Part I}{1}{section*.1}
+\tocdepth@munge 
+\contentsline {section}{\numberline {}Contents}{1}{section*.2}
+\tocdepth@restore 
+\contentsline {section}{\numberline {I}Problem 1}{1}{section*.3}
+\contentsline {subsection}{\numberline {A}(a)}{1}{section*.4}
+\contentsline {section}{\numberline {}References}{1}{section*.5}
