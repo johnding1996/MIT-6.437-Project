@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.stats as stats
+from scipy.optimize import linear_sum_assignment
 
 def shuffle(plaincode, length):
     start_index = np.random.randint(plaincode.shape[0]-length)
@@ -10,11 +11,12 @@ def encrypt(plaincode, order):
     ciphercode = f_true[plaincode]
     return ciphercode, f_true
 
-def initialize(num, order):
-    x = np.zeros((num, order), dtype=np.int)
-    for i in range(num):
-        x[i,] = np.random.permutation(order)
-    return x
+def initialize(lp, c, num, order):
+    cost = (np.tile(np.exp(lp[0]).reshape(order,1), (1,order))-np.tile((c[0]/np.sum(c[0])).reshape(1,order), (order,1)))**2
+    linear_sum_assignment(cost)
+    f_pred = linear_sum_assignment(cost)[1]
+    x = np.tile(f_pred.reshape(1,order), (num,1))
+    return change_without_mask(x, None, None)[1]
 
 def reshape_lp(lp, num):
     return [np.tile(np.expand_dims(lp[0], axis=0), (num,1)),
@@ -78,8 +80,8 @@ def count(ciphercode, order):
 def log_prob(x, lp, c, w):
     num = x.shape[0]
     order = x.shape[1]
-    x_lp = np.sum(c[0][x]*lp[0], axis=1)*w[0]
-    x_lp += np.sum(c[1][np.tile(x.reshape((num,order,1)), (1,1,order)), 
+    #x_lp = np.sum(c[0][x]*lp[0], axis=1)*w[0]
+    x_lp = np.sum(c[1][np.tile(x.reshape((num,order,1)), (1,1,order)), 
                         np.tile(x.reshape((num,1,order)), (1,order,1))
                        ]*lp[1], axis=(1,2))*w[1]
     x_lp += np.sum(c[2][np.tile(x.reshape((num,order,1,1)), (1,1,order,order)),
@@ -87,6 +89,9 @@ def log_prob(x, lp, c, w):
                         np.tile(x.reshape((num,1,1,order)), (1,order,order,1))
                        ]*lp[2], axis=(1,2,3))*w[2]
     return x_lp
+
+def best(x, x_lp):
+    return x[np.argmax(x_lp),].reshape(1,x.shape[1])
 
 def update(x, xp, p_delta):
     rs = (p_delta > 0).reshape((x.shape[0],1)).astype(np.int)

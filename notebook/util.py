@@ -1,11 +1,13 @@
 import numpy as np
 import csv
 import string
+import pickle
 
 def _read_csv(data_dir, file_name):
     with open(data_dir + '/' + file_name + '.csv', 'r') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         return list(reader)
+
 def _read_text(data_dir, file_name):
     with open(data_dir + '/' + file_name + '.txt', 'r') as textfile:
         return textfile.readlines()
@@ -22,6 +24,11 @@ def load_prob(data_dir):
     lp2 = np.load(data_dir + '/' + 'lp2.npy')
     lp3 = np.load(data_dir + '/' + 'lp3.npy')
     return [lp1, lp2, lp3]
+
+def load_word_prob(data_dir):
+    with open(data_dir + '/' + 'wlp.pickle', 'rb') as handle:
+        wlp = pickle.load(handle)
+        return wlp
 
 def to_code(text):
     alphabet = [a for a in string.ascii_lowercase] + [' ', '.']
