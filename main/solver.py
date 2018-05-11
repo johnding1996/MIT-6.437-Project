@@ -1,6 +1,5 @@
 import numpy as np
-import scipy.stats as stats
-from scipy.optimize import linear_sum_assignment
+from _hungarian import linear_sum_assignment
 from util import to_text
 
 def shuffle(plaincode, length):
@@ -120,12 +119,6 @@ def accuracy(x, ciphercode, plaincode):
     xinv = np.argsort(x, axis=1)
     plaincode = np.repeat(plaincode.reshape((1,-1)), x.shape[0], axis=0)
     return np.mean((xinv[:,ciphercode] == plaincode).astype(np.int))
-
-def kendalltau(x, f_true):
-    ktau = np.zeros(x.shape[0])
-    for i in range(x.shape[0]):
-        ktau[i] = stats.kendalltau(x[i,], f_true)[0]
-    return np.mean(ktau)
 
 def mapping_accuracy(x, f_true):
     func_acc = np.zeros(x.shape[0])
