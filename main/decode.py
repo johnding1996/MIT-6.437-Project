@@ -3,9 +3,8 @@ from util import *
 from solver import solve
 
 def decode(ciphertext, output_file_name): 
-    pc = to_code(load_text('../data/plaintext'))
-    lp = load_prob('../data/ngrams')
-    wlp = load_word_prob('../data/word')
+    lp = load_prob('./data/ngrams')
+    wlp = load_word_prob('./data/word')
     num = 10
     order = 28
     maxiter = 5000
