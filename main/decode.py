@@ -8,7 +8,7 @@ def decode(ciphertext, output_file_name):
     num = 10
     order = 28
     maxiter = 5000
-    verbose_interval = 0
+    verbose_interval = 100
     w = [1, 0.3, 16]
     threshold = 0.8
     use_mask = True
